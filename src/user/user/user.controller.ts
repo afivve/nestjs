@@ -9,11 +9,24 @@ import {
   Query,
   Redirect,
   Req,
+  Res,
 } from '@nestjs/common';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('/api/users')
 export class UserController {
+
+  @Get('/set-cookie')
+  setCookie(@Query('name') name: string, @Res() response: Response) {
+    response.cookie('name', name)
+    response.status(200).send('Success Set Cookie')
+  }
+
+  @Get('/get-cookie')
+  getCookie(@Req() request: Request): string {
+    return request.cookies['name']
+  }
+
   @Get('/sample-response')
   @Header('Content-Type', 'application/json')
   @HttpCode(200)
@@ -33,11 +46,11 @@ export class UserController {
   }
 
   @Get('/hello')
-  sayHello(
+  async sayHello(
     @Query('first_name') firstName: string,
     @Query('last_name') lastName: string,
     @Query('age') age: number,
-  ): string {
+  ): Promise<string> {
     return `Hello : ${firstName} ${lastName}, Umur : ${age}`;
   }
 
